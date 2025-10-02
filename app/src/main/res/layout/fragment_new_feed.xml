@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E9EBED"
+    android:orientation="vertical"
+    tools:context=".Packages.Newsfeed.NewFeedFragment">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:background="#FFFFFF"
+        android:id="@+id/storyStatus"
+        >
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/my_primary"
+            android:src="@drawable/baseline_user_24"
+            android:layout_centerVertical="true"
+            android:scaleType="centerCrop"
+
+            android:layout_marginStart="10dp"
+            android:id="@+id/profile_image_view"/>
+        <TextView
+            android:id="@+id/storyStatusBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/profile_image_view"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:text="Hôm nay bạn thế nào ?"
+            android:textStyle="bold"
+            android:textColor="@color/my_primary"
+            android:textSize="16sp"
+            />
+
+    </RelativeLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:id="@+id/container"
+        android:background="#EFEFEF"
+        android:layout_below="@+id/storyStatus"
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:id="@+id/recyclerViewStory"
+            android:layout_height="wrap_content"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/AddStoryBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="20dp"
+        android:padding="6dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/togle_button"
+        android:src="@drawable/baseline_pen_24"
+        android:tint="@color/chat_color_blue"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        />
+</RelativeLayout>

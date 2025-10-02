@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:checkable="true"
+        android:icon="@drawable/baseline_message_24"
+        android:id="@+id/navChat"
+        android:title="Tin nhắn"/>
+
+
+
+    <item android:id="@+id/other"
+        android:title="Khác"
+        >
+        <menu>
+
+            <item
+                android:checkable="true"
+                android:icon="@drawable/baseline_setting_24"
+                android:id="@+id/setting"
+                android:title="Cài đặt"/>
+        </menu>
+
+    </item>
+
+</menu>
