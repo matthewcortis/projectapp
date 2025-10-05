@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.project.MainActivity;
@@ -24,6 +25,7 @@ public class LoginFragment extends Fragment {
     private FirebaseAuth auth;
     private TextInputEditText etEmail, etPassword;
     private MaterialButton btnLogin;
+    private ProgressBar progressBar;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -44,6 +46,7 @@ public class LoginFragment extends Fragment {
         etEmail = view.findViewById(R.id.etEmail);
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
+        progressBar = view.findViewById(R.id.progress);
         login();
         return view;
     }
@@ -53,6 +56,7 @@ public class LoginFragment extends Fragment {
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
+
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
                 AndroidUtils.showToast(getContext(), "Vui lòng nhập đủ Email và Password");
                 return;
@@ -61,8 +65,14 @@ public class LoginFragment extends Fragment {
                 AndroidUtils.showToast(getContext(), "Mật khẩu phải có ít nhất 6 ký tự");
                 return;
             }
+            btnLogin.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+
             auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(requireActivity(), task -> {
+                        progressBar.setVisibility(View.GONE);
+                        btnLogin.setVisibility(View.VISIBLE);
+
                         if (task.isSuccessful()) {
                             FirebaseUser user = auth.getCurrentUser();
                             AndroidUtils.showToast(getContext(), "Đăng nhập thành công");
@@ -71,10 +81,11 @@ public class LoginFragment extends Fragment {
                             startActivity(intent);
                             requireActivity().finish();
                         } else {
-                            AndroidUtils.showToast(getContext(), "Đăng nhập thất bại: " + task.getException().getMessage());
+                            AndroidUtils.showToast(getContext(),
+                                    "Đăng nhập thất bại: " + task.getException().getMessage());
                         }
                     });
-
         });
     }
+
 }

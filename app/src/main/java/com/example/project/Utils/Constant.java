@@ -1,6 +1,8 @@
 package com.example.project.Utils;
 
 public class Constant {
+
+
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_USER_NAME = "username";
     public static final String KEY_PHONE       = "phone";

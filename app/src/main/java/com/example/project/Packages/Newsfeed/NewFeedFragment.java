@@ -36,7 +36,11 @@ public class NewFeedFragment extends Fragment {
 
 
         compatImageView.setOnClickListener(v -> {
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_layout, new AddNewFeedFragment()).commit();
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.main_frame_layout, new AddNewFeedFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
         return view;
     }

@@ -15,9 +15,8 @@ swiperefreshlayout = "1.1.0"
 glide = "4.16.0"
 imagepicker = "2.1"
 play_services_location = "21.1.0"
-maps = "18.1.0"
-
-
+mapbox = "11.15.2"
+mapbox_compose = "11.15.2"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -38,9 +37,8 @@ swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout"
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "imagepicker" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play_services_location" }
-google-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "maps" }
-
-
+mapbox = { group = "com.mapbox.maps", name = "android-ndk27", version.ref = "mapbox" }
+mapbox-compose = { group = "com.mapbox.extension", name = "maps-compose-ndk27", version.ref = "mapbox_compose" }
 
 
 

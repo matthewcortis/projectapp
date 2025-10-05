@@ -337,7 +337,7 @@ public class AddNewFeedFragment extends Fragment {
         country = dialog.findViewById(R.id.country);
         lagitude = dialog.findViewById(R.id.lagitude);
         longitude = dialog.findViewById(R.id.longitude);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
 
         successBtn.setOnClickListener(v -> {

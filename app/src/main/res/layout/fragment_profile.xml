@@ -7,6 +7,15 @@
     android:layout_margin="13dp"
     tools:context=".Packages.User.Profile.ProfileFragment">
 
+    <ProgressBar
+        android:layout_centerHorizontal="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:id="@+id/progress"
+        android:layout_centerInParent="true"
+        android:indeterminateTint="@color/my_primary"
+        android:visibility="gone"
+        />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/avatar"
@@ -51,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
+            android:enabled="false"
             android:drawableEnd="@drawable/baseline_message_24"
             android:padding="12dp"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -68,6 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
+            android:enabled="false"
             android:drawableEnd="@drawable/baseline_phone_24"
             android:padding="12dp"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -85,6 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri"
+            android:enabled="false"
             android:drawableEnd="@drawable/baseline_website_24"
             android:padding="12dp"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -103,6 +115,7 @@
             android:id="@+id/gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled="false"
             android:drawableEnd="@drawable/baseline_user_24"
             android:padding="12dp"/>
 

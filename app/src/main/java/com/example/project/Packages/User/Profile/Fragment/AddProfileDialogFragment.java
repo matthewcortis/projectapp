@@ -25,12 +25,16 @@ import androidx.fragment.app.DialogFragment;
 import com.example.project.Model.UserModel;
 import com.example.project.R;
 import com.example.project.Utils.AndroidUtils;
+import com.example.project.Utils.Constant;
 import com.example.project.Utils.FirebaseUtils;
 import com.github.dhaval2404.imagepicker.ImagePicker;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import kotlin.Unit;
@@ -127,7 +131,12 @@ public class AddProfileDialogFragment extends DialogFragment {
                         if (selectdImageUri != null){
                             FirebaseUtils.getCurrentProfilePicStorageRef().putFile(selectdImageUri).
                                     addOnCompleteListener(task -> {
-                                        updateToFireSore();
+                                        if (task.isSuccessful()) {
+                                            updateToFireSore();
+                                        } else {
+                                            setInProgressData(false);
+                                            AndroidUtils.showToast(requireContext(), "Upload ảnh thất bại");
+                                        }
                                     });
                         }else {
                             updateToFireSore();
@@ -157,13 +166,18 @@ public class AddProfileDialogFragment extends DialogFragment {
         }
         FirebaseUtils.currentUserDetails().get().addOnCompleteListener(task -> {
             setInProgress(false);
-            currentUserModel = task.getResult().toObject(UserModel.class);
-            if (currentUser != null) {
-                name.setText(currentUserModel.getUsername());
-                phone.setText(currentUserModel.getPhone());
+            if (!isAdded()) return;
 
-                website.setText(currentUserModel.getWebsite());
-                genderAutoComplete.setText(currentUserModel.getGender());
+            if (task.isSuccessful() && task.getResult() != null) {
+                currentUserModel = task.getResult().toObject(UserModel.class);
+                if (currentUserModel != null) {
+                    name.setText(currentUserModel.getUsername() != null ? currentUserModel.getUsername() : "");
+                    phone.setText(currentUserModel.getPhone() != null ? currentUserModel.getPhone() : "");
+                    website.setText(currentUserModel.getWebsite() != null ? currentUserModel.getWebsite() : "");
+                    genderAutoComplete.setText(currentUserModel.getGender() != null ? currentUserModel.getGender() : "");
+                }
+            } else {
+                Log.e("Firestore", "Lỗi tải dữ liệu", task.getException());
             }
         });
         FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().
@@ -171,7 +185,8 @@ public class AddProfileDialogFragment extends DialogFragment {
                     if (task.isSuccessful()){
 
                         Uri uri = task.getResult();
-                        AndroidUtils.setProfilePic(getContext(), uri, avatar);
+                        if (!isAdded()) return;
+                        AndroidUtils.setProfilePic(requireContext(), uri, avatar);
                     }
 
                 });
@@ -190,14 +205,21 @@ public class AddProfileDialogFragment extends DialogFragment {
     }
 
     void updateToFireSore(){
-        FirebaseUtils.currentUserDetails().set(currentUserModel)
+        Map<String, Object> updates = new HashMap<>();
+        if (currentUserModel.getUsername() != null) updates.put(Constant.KEY_USER_NAME, currentUserModel.getUsername());
+        if (currentUserModel.getEmail() != null) updates.put(Constant.KEY_EMAIL, currentUserModel.getEmail());
+        if (currentUserModel.getPhone() != null) updates.put(Constant.KEY_PHONE, currentUserModel.getPhone());
+        if (currentUserModel.getWebsite() != null) updates.put(Constant.KEY_WEBSITE, currentUserModel.getWebsite());
+        if (currentUserModel.getGender() != null) updates.put(Constant.KEY_GENDER, currentUserModel.getGender());
+
+        FirebaseUtils.currentUserDetails()
+                .update(updates)
                 .addOnCompleteListener(task -> {
                     if (!isAdded()) return;
-                    setInProgress(false);
-                    if (task.isSuccessful()){
+                    setInProgressData(false);
+                    if (task.isSuccessful()) {
                         AndroidUtils.showToast(requireContext(), "Update thành công");
-
-                    }else {
+                    } else {
                         AndroidUtils.showToast(requireContext(), "Update thất bại");
                     }
                 });

@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.project.MainActivity;
@@ -27,6 +28,7 @@ public class RegisterFragment extends Fragment {
     private FirebaseAuth auth;
     private TextInputEditText etEmail, enter_etPassword, etPassword;
     private MaterialButton btnRegister;
+    private ProgressBar progressBar;
 
 
     public RegisterFragment() {
@@ -51,6 +53,7 @@ public class RegisterFragment extends Fragment {
         etPassword = view.findViewById(R.id.etPassword);
         enter_etPassword = view.findViewById(R.id.enter_etPassword);
         btnRegister = view.findViewById(R.id.btnRegister);
+        progressBar = view.findViewById(R.id.progress);
         register();
         return view;
     }
@@ -72,11 +75,13 @@ public class RegisterFragment extends Fragment {
                 AndroidUtils.showToast(getContext(), "Mật khẩu nhập lại không khớp");
                 return;
             }
+            setLoading(true);
             auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(requireActivity(), task -> {
                         if (task.isSuccessful()) {
                             saveUser();
                         } else {
+                            setLoading(false);
                             AndroidUtils.showToast(getContext(), "Đăng ký thất bại: " + task.getException().getMessage());
                         }
                     });
@@ -92,17 +97,18 @@ public class RegisterFragment extends Fragment {
             UserModel userModel = new UserModel();
             userModel.setUserId(userId);
             userModel.setEmail(user.getEmail());
-            userModel.setUsername(""); // để rỗng lúc đăng ký
+            userModel.setUsername("");
             userModel.setPhone("");
             userModel.setGender("");
             userModel.setWebsite("");
-            userModel.setStatus("Offline"); // offline mặc định
+            userModel.setStatus("Offline");
 
             FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(userId)
                     .set(userModel)
                     .addOnCompleteListener(storeTask -> {
+                        setLoading(false);
                         if (storeTask.isSuccessful()) {
                             Intent intent = new Intent(getActivity(), HomeMainActivity.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -114,7 +120,18 @@ public class RegisterFragment extends Fragment {
                         }
                     });
         } else {
+            setLoading(false);
             AndroidUtils.showToast(getContext(), "Lỗi: user null");
+        }
+    }
+
+    private void setLoading(boolean isLoading) {
+        if (isLoading) {
+            btnRegister.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            btnRegister.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
         }
     }
 

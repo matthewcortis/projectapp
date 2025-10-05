@@ -53,7 +53,6 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.imagepicker)
     implementation(libs.play.services.location)
-    implementation(libs.google.maps)
-
-
+    implementation(libs.mapbox)
+    implementation(libs.mapbox.compose)
 }
