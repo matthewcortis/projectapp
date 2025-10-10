@@ -180,16 +180,7 @@ public class AddProfileDialogFragment extends DialogFragment {
                 Log.e("Firestore", "Lỗi tải dữ liệu", task.getException());
             }
         });
-        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().
-                addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-
-                        Uri uri = task.getResult();
-                        if (!isAdded()) return;
-                        AndroidUtils.setProfilePic(requireContext(), uri, avatar);
-                    }
-
-                });
+        AndroidUtils.loadCurrentProfilePicture(requireContext(), avatar);
     }
     @Override
     public void onStart() {

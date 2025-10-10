@@ -2,8 +2,8 @@ package com.example.project.Model;
 
 import com.google.firebase.Timestamp;
 import java.util.HashMap;
-
-public class UserModel {
+import java.io.Serializable;
+public class UserModel implements Serializable {
     private String phone;
     private String email;
     private String username;
@@ -33,7 +33,6 @@ public class UserModel {
         this.longitude = longitude;
     }
 
-    // Constructor từ HashMap (tiện khi lấy dữ liệu Firestore)
     public UserModel(HashMap<String, Object> userData) {
         if (userData != null) {
             this.userId = (String) userData.get("userId");

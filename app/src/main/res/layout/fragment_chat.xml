@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Packages.Chat.ChatFragment">
+    >
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="chattt" />
+        android:layout_height="wrap_content"
+        android:id="@+id/recyler_view"/>
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/notification"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Không có tin nhắn nào"
+        android:textColor="@color/my_primary"
+        android:textSize="26sp"
+        android:layout_centerInParent="true"
+        />
+
+</RelativeLayout>

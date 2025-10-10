@@ -22,7 +22,6 @@
             android:src="@drawable/baseline_user_24"
             android:layout_centerVertical="true"
             android:scaleType="centerCrop"
-
             android:layout_marginStart="10dp"
             android:id="@+id/profile_image_view"/>
         <TextView

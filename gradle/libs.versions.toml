@@ -17,6 +17,11 @@ imagepicker = "2.1"
 play_services_location = "21.1.0"
 mapbox = "11.15.2"
 mapbox_compose = "11.15.2"
+firebase-ui = "8.0.2"
+okhttp = "4.11.0"
+
+
+
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -39,7 +44,9 @@ imagepicker = { module = "com.github.dhaval2404:imagepicker", version.ref = "ima
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play_services_location" }
 mapbox = { group = "com.mapbox.maps", name = "android-ndk27", version.ref = "mapbox" }
 mapbox-compose = { group = "com.mapbox.extension", name = "maps-compose-ndk27", version.ref = "mapbox_compose" }
-
+google-maps = { module = "com.google.android.gms:play-services-maps", version = "19.2.0" }
+firebase-ui-firestore = { group = "com.firebaseui", name = "firebase-ui-firestore", version.ref = "firebase-ui" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 
 
 

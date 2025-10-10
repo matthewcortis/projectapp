@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="HashtagText">
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+</resources>

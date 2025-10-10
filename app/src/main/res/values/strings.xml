@@ -17,4 +17,6 @@
     <string name="trang_chu">Trang Chủ</string>
     <string name="disconect_text">Không có kết nối internet</string>
     <string name="search_text">Search</string>
+    <string name="image_post">video</string>
+    <string name="video_post">video\n</string>
 </resources>

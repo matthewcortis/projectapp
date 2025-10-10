@@ -1,9 +1,13 @@
 package com.example.project.Packages.User.Profile;
 
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,6 +17,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.project.Auth.MainAuthActivity;
+import com.example.project.Model.PreferenceManager;
 import com.example.project.Model.UserModel;
 import com.example.project.Packages.User.Profile.Fragment.AddProfileDialogFragment;
 import com.example.project.R;
@@ -27,9 +33,10 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ProfileFragment extends Fragment {
     CircleImageView avatar;
+    PreferenceManager preferenceManager;
     UserModel currentUserModel;
     AppCompatImageView addProfileBtn;
-    TextView name;
+    TextView name, logoutBtn;
     TextInputEditText email, phone, website, gender;
     private ProgressBar progressBar;
     private TextInputLayout email_layout, phone_layout, website_layout, genderTextInputLayout;
@@ -52,23 +59,10 @@ public class ProfileFragment extends Fragment {
             } else {
                 AndroidUtils.showToast(getContext(), "Không tải được thông tin user");
             }
-            loadProfilePic();
+            AndroidUtils.loadCurrentProfilePicture(requireContext(), avatar);
         });
+        setLoading(false);
     }
-
-    private void loadProfilePic() {
-        FirebaseUtils.getCurrentProfilePicStorageRef().getDownloadUrl().
-                addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-
-                        Uri uri = task.getResult();
-                        AndroidUtils.setProfilePic(getContext(), uri, avatar);
-                    }
-                    setLoading(false);
-                });
-    }
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,13 +74,14 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
+        preferenceManager = new PreferenceManager(requireContext());
         addProfileBtn = view.findViewById(R.id.AddProfileBtn);
         email = view.findViewById(R.id.email);
         gender = view.findViewById(R.id.gender);
         phone = view.findViewById(R.id.phone);
         website = view.findViewById(R.id.website);
         name = view.findViewById(R.id.name);
+        logoutBtn = view.findViewById(R.id.logout_btn);
         avatar = view.findViewById(R.id.avatar);
         progressBar = view.findViewById(R.id.progress);
         email_layout = view.findViewById(R.id.email_layout);
@@ -96,6 +91,9 @@ public class ProfileFragment extends Fragment {
 
         getData();
         addProfile();
+        logoutBtn.setOnClickListener(v -> {
+            sigOutDialog();
+        });
         return view;
     }
 
@@ -130,4 +128,27 @@ public class ProfileFragment extends Fragment {
         }
     }
 
+    void sigOutDialog(){
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.custom_dialog_sign_out);
+        Drawable customBackground  = ContextCompat.getDrawable(getContext(), R.drawable.dialog_backgroud);
+        dialog.getWindow().setBackgroundDrawable(customBackground);
+        TextView no = dialog.findViewById(R.id.cancelBtn);
+        TextView yes = dialog.findViewById(R.id.successBtn);
+
+        no.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        yes.setOnClickListener(v -> {
+
+            dialog.dismiss();
+            preferenceManager.clear();
+            FirebaseUtils.logout();
+            Intent intent = new Intent(getContext(), MainAuthActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+        dialog.show();
+
+    }
 }

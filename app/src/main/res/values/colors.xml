@@ -2,7 +2,7 @@
 <resources>
     <color name="my_primary">#A4C6D6</color>
     <color name="my_secondary">#FFE74C</color>
-
+    <color name="splash_on_primary">#0D2840</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 

@@ -15,6 +15,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -35,11 +36,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.example.project.Model.NewFeedModel;
 import com.example.project.Model.UserModel;
+import com.example.project.Packages.Home.HomeMainActivity;
 import com.example.project.R;
 import com.example.project.Utils.AndroidUtils;
 import com.example.project.Utils.Constant;
 import com.example.project.Utils.FirebaseUtils;
+import com.example.project.Utils.GoogleMapsUtils;
 import com.example.project.Utils.Permission;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -56,6 +60,7 @@ import com.google.firebase.storage.UploadTask;
 import org.checkerframework.checker.units.qual.A;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -102,10 +107,15 @@ public class AddNewFeedFragment extends Fragment {
         addImagePostBtn = view.findViewById(R.id.add_image);
         imagePost = view.findViewById(R.id.image);
         videoStory = view.findViewById(R.id.videoViewStory);
+        backBtn = view.findViewById(R.id.back_btn);
         videoBackgroundCardView = view.findViewById(R.id.videoBackgroundCardView);
         postBtn = view.findViewById(R.id.post);
         writeStory = view.findViewById(R.id.writeStoryPost);
         setData();
+        backBtn.setOnClickListener(v -> {
+            ((HomeMainActivity) requireActivity()).setBottomNavVisible(true);
+            requireActivity().getSupportFragmentManager().popBackStack();
+        });
 
         addImagePostBtn.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -114,6 +124,7 @@ public class AddNewFeedFragment extends Fragment {
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             pickImage.launch(intent);
         });
+
         postBtn.setOnClickListener(v -> {
             if (mediaUri == null) {
                 AndroidUtils.showToast(requireContext(), "Bạn chưa chọn ảnh hoặc video");
@@ -136,6 +147,8 @@ public class AddNewFeedFragment extends Fragment {
             } else {
                 AndroidUtils.showToast(requireContext(), "Lỗi định dạng");
             }
+            ((HomeMainActivity) requireActivity()).setBottomNavVisible(true);
+            requireActivity().getSupportFragmentManager().popBackStack();
         });
         locationBtn.setOnClickListener(v -> {
             showLocationDialog();
@@ -149,52 +162,74 @@ public class AddNewFeedFragment extends Fragment {
         if (writeStory.getText().toString().isEmpty()){
             AndroidUtils.showToast( requireContext(),"Hãy viết gì đó hoặc chọn ảnh để tạo bài viết mới!");
         }else {
-            HashMap<String, Object> post = new HashMap<>();
-            post.put("idAuthor", currentUserModel.getUserId());
-            post.put("nameAuthor", currentUserModel.getUsername());
-            post.put("address", address.getText().toString());
-            post.put("postTimestamp", Timestamp.now());
-            post.put("postText", writeStory.getText().toString());
-            post.put("postMedia", mediaUrl);
-            post.put("imageStatus", "0");
-            post.put("videoStatus", "1");
-
-
-            FirebaseUtils.postStory().add(post).addOnSuccessListener(documentReference -> {
-                AndroidUtils.showToast(requireContext(), "Bài viết đã được đăng lên trang cá nhân");
-                requireActivity().onBackPressed();
-            }).addOnFailureListener(e -> {
-                AndroidUtils.showToast(requireContext(), "Đăng bài thất bại");
-            });
-
+            String addressText = (address != null && address.getText() != null)
+                    ? address.getText().toString().trim()
+                    : "";
+            double lat = currentUserModel.getLatitude();
+            double lon = currentUserModel.getLongitude();
+            NewFeedModel post = new NewFeedModel(
+                    lon,                       // longitude
+                    lat,                       // latitude
+                    0.0,                       // rating
+                    new Date(),                // postTimestamp
+                    0,                         // likeCount
+                    addressText,                // location
+                    "0",                       // videoStatus
+                    "1",                       // imageStatus
+                    writeStory.getText().toString().trim(), // postText
+                    mediaUrl,                  // postMedia
+                    currentUserModel.getUserId() // idAuthor
+            );
+            postNewFeed(post);
         }
 
 
     }
     private void sendImageMessage(String mediaUrl) {
-        if (writeStory.getText().toString().isEmpty()){
-            AndroidUtils.showToast(requireContext(),"Hãy viết gì đó hoặc chọn ảnh để tạo bài viết mới!");
-        }else {
-            HashMap<String, Object> post = new HashMap<>();
-            post.put("idAuthor", currentUserModel.getUserId());
-            post.put("nameAuthor", currentUserModel.getUsername());
-            post.put("address", address.getText().toString());
-            post.put("postTimestamp", Timestamp.now());
-            post.put("postText", writeStory.getText().toString());
-            post.put("postMedia", mediaUrl);
-            post.put("imageStatus", "1");
-            post.put("videoStatus", "0");
+        String text = writeStory.getText().toString().trim();
 
-            FirebaseUtils.postStory().add(post).addOnSuccessListener(documentReference -> {
-                AndroidUtils.showToast(requireContext(), "Bài viết đã được đăng lên trang cá nhân");
-                requireActivity().onBackPressed();
-            }).addOnFailureListener(e -> {
-                AndroidUtils.showToast(requireContext(), e.getMessage());
-            });
-
+        if (text.isEmpty() && (mediaUrl == null || mediaUrl.isEmpty())) {
+            AndroidUtils.showToast(requireContext(),
+                    "Hãy viết gì đó hoặc chọn ảnh để tạo bài viết mới!");
+            return;
         }
+        String addressText = (address != null && address.getText() != null)
+                ? address.getText().toString().trim()
+                : "";
+        double lat = currentUserModel.getLatitude() != null ? currentUserModel.getLatitude() : 0.0;
+        double lon = currentUserModel.getLongitude() != null ? currentUserModel.getLongitude() : 0.0;
+        NewFeedModel post = new NewFeedModel(
+                lon,                       // longitude
+                lat,                       // latitude
+                0.0,                       // rating
+                new Date(),                // postTimestamp
+                0,                         // likeCount
+                addressText,               // location
+                "0",                       // videoStatus
+                "1",                       // imageStatus
+                writeStory.getText().toString().trim(), // postText
+                mediaUrl,                  // postMedia
+                currentUserModel.getUserId() // idAuthor
+        );
+
+        postNewFeed(post);
+    }
 
 
+    private void postNewFeed(NewFeedModel newFeedModel){
+        FirebaseUtils.postStory()
+                .add(newFeedModel)
+                .addOnSuccessListener(documentReference -> {
+                    if (isAdded() && getContext() != null) {
+                        AndroidUtils.showToast(getContext(), "Bài viết đã được đăng lên trang cá nhân");
+                        requireActivity().onBackPressed();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (isAdded() && getContext() != null) {
+                        AndroidUtils.showToast(getContext(), e.getMessage());
+                    }
+                });
     }
     void setData(){
         FirebaseUtils.currentUserDetails().get().addOnCompleteListener(task -> {
@@ -416,19 +451,8 @@ public class AddNewFeedFragment extends Fragment {
         }
     }
     void updateLocationToFirestore(double lat, double lon){
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("latitude", lat);
-        updates.put("longitude", lon);
-        FirebaseUtils.currentUserDetails().update(updates)
-                .addOnCompleteListener(task -> {
-                    if (!isAdded()) return;
-                    if (task.isSuccessful()){
-                        showToast(requireContext(), "Update thành công");
-
-                    }else {
-                        showToast(requireContext(), "Update thất bại");
-                    }
-                });
+        if (!isAdded()) return;
+        GoogleMapsUtils.updateLocationUserToFirestore(lat, lon, requireContext());
     }
     private void askForLocationPermission() {
         ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);

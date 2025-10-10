@@ -29,7 +29,23 @@ public class PreferenceManager {
     public String getString(String key) {
         return sharedPreferences.getString(key, null);
     }
+    public void putDouble(String key, double value) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, String.valueOf(value));
+        editor.apply();
+    }
 
+    public double getDouble(String key) {
+        String value = sharedPreferences.getString(key, null);
+        if (value != null) {
+            try {
+                return Double.parseDouble(value);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        return 0.0; // giá trị mặc định nếu chưa có
+    }
     public void clear() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();

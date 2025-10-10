@@ -45,6 +45,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
+    implementation(libs.play.services.location)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.circleimageview)
@@ -52,7 +53,9 @@ dependencies {
     implementation(libs.swiperefreshlayout)
     implementation(libs.glide)
     implementation(libs.imagepicker)
-    implementation(libs.play.services.location)
+    implementation(libs.okhttp)
     implementation(libs.mapbox)
     implementation(libs.mapbox.compose)
+    implementation(libs.google.maps)
+    implementation (libs.firebase.ui.firestore)
 }
