@@ -13,7 +13,6 @@ public class Constant {
     public static final String KEY_GENDER      = "gender";
     public static final String KEY_LATITUDE    = "latitude";
     public static final String KEY_LONGITUDE   = "longitude";
-    public static final String KEY_MAP = "https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places&callback=initMap";
 
 
     public static final String FIELD_ID_AUTHOR = "idAuthor";
